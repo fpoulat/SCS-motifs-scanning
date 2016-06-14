@@ -116,8 +116,24 @@ kmerhunter2
 
 ----------------------------------------------------------------------------------------------------------------------------
 commonkmers : contains the program komonkmer2
+komonkmer2 reads the following files :
+- Liste_genes_bostau6_orthologu_mouse_mm10.txt : this is a tex files with 2 columns that lists the names of orthologous genes in two species, here bostau6 and mm10.
+- the Kmerhunt lengthX for species 1
+- the Kmerhunt lengthX for species 2
+It produces then a csv file with a name of the form shared_kmers8_Bostau6_mm10.csv
 
+In this folder you find the Lazarus source code :
 
+backup
+komonkmer2.ico
+komonkmer2.lpr
+komonkmer2.res
+unit1.lfm
+komonkmer2  
+komonkmer2.lpi  
+komonkmer2.lps  lib             
+test-data                       
+unit1.pas
 
 ---------------------------------------------------------------------------------------------------------------------------
 -end-
