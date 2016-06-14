@@ -1,0 +1,124 @@
+Memo1
+Opening Sites file :/home/philippe/MEGA/poulat13/intervalles_7b_x64/test-data/Merge concB1B2_FDR5e-2_bostau6_5SF.ft
+Date :13-6-16
+Time :12:14:39
+Entering into Intervalles
+File loaded   :/home/philippe/MEGA/poulat13/intervalles_7b_x64/test-data/Merge concB1B2_FDR5e-2_bostau6_5SF.ft
+Lines Read    :375505
+Entering into FindTableAndMatrixList
+**** Analysis Started ****
+Found #seq_id table at line31
+Found :13 columns in seq_id table
+Found #seq_id at column :1
+Found ft_type at column :2
+Found ft_name at column :3
+Found strand at column :4
+Found start at column :5
+Found end at column :6
+Found sequence at column :7
+Found weight at column :8
+Found Pval at column :9
+Found ln_Pval at column :10
+Found sig at column :11
+Found 5 Matrixes
+In 375447 records
+Matrix List : 
+0 Dmrt1
+1 GATA4
+2 SF1
+3 SOX9
+4 WT1
+Entering into FillFragmentsPositionTable
+Fragment Table start  : 31
+Fragment starts found : 11988
+Fragment ends found   : 11988
+First Fragment start  : 32
+First Fragment end    : 46
+Last Fragment start   : 375474
+Last Fragment end     : 375477
+Fragment Table end    : 375477
+Entering into SortFragmentsSitesLists
+Saved SortedSiteList as /home/philippe/MEGA/poulat13/intervalles_7b_x64/test-data/Merge concB1B2_FDR5e-2_bostau6_5SF.ft_sorted.csv
+Entering into PrepVsHashTable
+IntervalsTable[0][0] : All_anti_All
+IntervalsTable[1][0] : All_size
+IntervalsTable[2][0] : All_syn_All
+IntervalsTable[3][0] : All_to_All
+IntervalsTable[4][0] : Dmrt1_anti_Dmrt1
+IntervalsTable[5][0] : Dmrt1_anti_GATA4
+IntervalsTable[6][0] : Dmrt1_anti_SF1
+IntervalsTable[7][0] : Dmrt1_anti_SOX9
+IntervalsTable[8][0] : Dmrt1_anti_WT1
+IntervalsTable[9][0] : Dmrt1_syn_Dmrt1
+IntervalsTable[10][0] : Dmrt1_syn_GATA4
+IntervalsTable[11][0] : Dmrt1_syn_SF1
+IntervalsTable[12][0] : Dmrt1_syn_SOX9
+IntervalsTable[13][0] : Dmrt1_syn_WT1
+IntervalsTable[14][0] : Dmrt1_to_Dmrt1
+IntervalsTable[15][0] : Dmrt1_to_GATA4
+IntervalsTable[16][0] : Dmrt1_to_SF1
+IntervalsTable[17][0] : Dmrt1_to_SOX9
+IntervalsTable[18][0] : Dmrt1_to_WT1
+IntervalsTable[19][0] : GATA4_anti_Dmrt1
+IntervalsTable[20][0] : GATA4_anti_GATA4
+IntervalsTable[21][0] : GATA4_anti_SF1
+IntervalsTable[22][0] : GATA4_anti_SOX9
+IntervalsTable[23][0] : GATA4_anti_WT1
+IntervalsTable[24][0] : GATA4_syn_Dmrt1
+IntervalsTable[25][0] : GATA4_syn_GATA4
+IntervalsTable[26][0] : GATA4_syn_SF1
+IntervalsTable[27][0] : GATA4_syn_SOX9
+IntervalsTable[28][0] : GATA4_syn_WT1
+IntervalsTable[29][0] : GATA4_to_Dmrt1
+IntervalsTable[30][0] : GATA4_to_GATA4
+IntervalsTable[31][0] : GATA4_to_SF1
+IntervalsTable[32][0] : GATA4_to_SOX9
+IntervalsTable[33][0] : GATA4_to_WT1
+IntervalsTable[34][0] : SF1_anti_Dmrt1
+IntervalsTable[35][0] : SF1_anti_GATA4
+IntervalsTable[36][0] : SF1_anti_SF1
+IntervalsTable[37][0] : SF1_anti_SOX9
+IntervalsTable[38][0] : SF1_anti_WT1
+IntervalsTable[39][0] : SF1_syn_Dmrt1
+IntervalsTable[40][0] : SF1_syn_GATA4
+IntervalsTable[41][0] : SF1_syn_SF1
+IntervalsTable[42][0] : SF1_syn_SOX9
+IntervalsTable[43][0] : SF1_syn_WT1
+IntervalsTable[44][0] : SF1_to_Dmrt1
+IntervalsTable[45][0] : SF1_to_GATA4
+IntervalsTable[46][0] : SF1_to_SF1
+IntervalsTable[47][0] : SF1_to_SOX9
+IntervalsTable[48][0] : SF1_to_WT1
+IntervalsTable[49][0] : SOX9_anti_Dmrt1
+IntervalsTable[50][0] : SOX9_anti_GATA4
+IntervalsTable[51][0] : SOX9_anti_SF1
+IntervalsTable[52][0] : SOX9_anti_SOX9
+IntervalsTable[53][0] : SOX9_anti_WT1
+IntervalsTable[54][0] : SOX9_syn_Dmrt1
+IntervalsTable[55][0] : SOX9_syn_GATA4
+IntervalsTable[56][0] : SOX9_syn_SF1
+IntervalsTable[57][0] : SOX9_syn_SOX9
+IntervalsTable[58][0] : SOX9_syn_WT1
+IntervalsTable[59][0] : SOX9_to_Dmrt1
+IntervalsTable[60][0] : SOX9_to_GATA4
+IntervalsTable[61][0] : SOX9_to_SF1
+IntervalsTable[62][0] : SOX9_to_SOX9
+IntervalsTable[63][0] : SOX9_to_WT1
+IntervalsTable[64][0] : WT1_anti_Dmrt1
+IntervalsTable[65][0] : WT1_anti_GATA4
+IntervalsTable[66][0] : WT1_anti_SF1
+IntervalsTable[67][0] : WT1_anti_SOX9
+IntervalsTable[68][0] : WT1_anti_WT1
+IntervalsTable[69][0] : WT1_syn_Dmrt1
+IntervalsTable[70][0] : WT1_syn_GATA4
+IntervalsTable[71][0] : WT1_syn_SF1
+IntervalsTable[72][0] : WT1_syn_SOX9
+IntervalsTable[73][0] : WT1_syn_WT1
+IntervalsTable[74][0] : WT1_to_Dmrt1
+IntervalsTable[75][0] : WT1_to_GATA4
+IntervalsTable[76][0] : WT1_to_SF1
+IntervalsTable[77][0] : WT1_to_SOX9
+IntervalsTable[78][0] : WT1_to_WT1
+Entering into FillIntervalsTable
+Entering into FieldFusion
+Entering into GellyRoll

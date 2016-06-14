@@ -1,0 +1,8 @@
+s/ //g
+s/a/DMRT1_D /g
+s/b/DMRT1_R /g
+s/c/GATA4_D /g
+s/d/GATA4_R /g
+s/e/SOX9_D /g
+s/f/SOX9_R /g
+

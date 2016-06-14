@@ -1,0 +1,448 @@
+unit MatSigUnit1;
+
+{$mode objfpc}{$H+}
+
+interface
+
+uses
+  Classes, SysUtils, FileUtil, Forms, Controls, Graphics, Dialogs, ExtCtrls,
+  StdCtrls, ComCtrls, Grids, StrUtils, Math;
+
+type
+
+  { TForm1 }
+
+  TForm1 = class(TForm)
+    Button1: TButton;
+    Button2: TButton;
+    Button5: TButton;
+    Button6: TButton;
+    Label1: TLabel;
+    Label2: TLabel;
+    Memo1: TMemo;
+    OpenDialog1: TOpenDialog;
+    OpenDialog2: TOpenDialog;
+    Panel1: TPanel;
+    Panel2: TPanel;
+    SaveDialog1: TSaveDialog;
+    procedure Button1Click(Sender: TObject);
+    procedure Button2Click(Sender: TObject);
+    procedure Button5Click(Sender: TObject);
+    procedure Button6Click(Sender: TObject);
+
+    procedure EnGrille(Liste: TStringList; Grille : TStringGrid);
+    procedure AnalyseSites(Liste, CountList : TStringList);
+    procedure FusionDesListes(SiteCountStringList, RandCountStringList, SiteRandCountStringList : TStringList);
+    procedure FormCreate(Sender: TObject);
+  private
+    { private declarations }
+    SiteStringList,
+    RandStringList,
+    SiteCountStringList,
+    RandCountStringList,
+    SiteRandCountStringList: TStringList;
+    SiteFileName,
+    RandFileName : String;
+  public
+    { public declarations }
+  end; 
+
+var
+  Form1: TForm1;
+  AllowSave,
+  SitesLoaded,
+  RandLoaded,
+  FusionDone: Boolean;
+
+implementation
+
+{$R *.lfm}
+
+{ TForm1 }
+
+procedure TForm1.EnGrille(Liste: TStringList; Grille : TStringGrid);
+var
+  IndexDebut,
+  FinDeListe,
+  Colonne,
+  LigneDeGrille,
+  LigneDeListe,
+  ft_typeCol,
+  NbColonnes : integer;
+  ContenuCellule : String;
+  Delimiteurs : TSysCharSet;
+Begin
+     // find header, reads lines, split strings, store in Grid
+     Delimiteurs := [Chr(09)]; // columns delimited by vtab
+     IndexDebut := -1;         // init loop index
+     NbColonnes := 0;          // init number of columns
+     Memo1.Append('**** Engrille ****'); // log debug
+     FinDeListe := Liste.count -1; // find end of list
+     Repeat  // find header start of table looking for a string starting with #seq_id
+           IndexDebut := IndexDebut + 1;
+     until ((IndexDebut = FinDeListe) or (LeftStr(Liste[IndexDebut],7)='#seq_id'));
+     If IndexDebut < FinDeListe then // if table header found
+        Begin
+             Memo1.Append('Found #seq_id table at line'+IntToStr(IndexDebut+1));
+             NbColonnes := WordCount(Liste[IndexDebut],Delimiteurs); // count number of columns
+             Memo1.Append('Found :'+IntToStr(NbColonnes)+ ' columns in seq_id table');
+             Grille.Clean;                  // Cleanup destination StringGrid
+             Grille.ColCount := NbColonnes; // set nuber of columns in StringGrid
+             Grille.DefaultColWidth:= (Width div NbColonnes);
+             Grille.RowCount := Liste.Count;// make room in grid (in excess to avoid counting)
+
+             // copy header strings in grid row 0 and find ft_type column by scanning header at IndexDebut
+             For Colonne := 1 to (NbColonnes) do  // for eachh column
+             begin
+                 ContenuCellule := ExtractDelimited(Colonne,Liste[IndexDebut],Delimiteurs);
+                 Grille.Cells[Colonne-1,0]:= ContenuCellule; // copy header
+                 If ContenuCellule = 'ft_type' then        // dind ft_type
+                 begin
+                 ft_typeCol := Colonne;
+                 Memo1.Append('Engrille Found ft-type at column :'+IntToStr(Colonne));
+                 end;
+             end;
+
+             // now fill grid with the table
+             LigneDeListe := IndexDebut+1; // init TStringList index to 1rest line of table
+             LigneDeGrille := 1;            // init Grid index to 1
+             while  // while in list and ft_type = site or limit
+             (
+                  (LigneDeListe <> FinDeListe)
+                  AND
+                  (
+                      (ExtractDelimited(ft_typeCol,Liste[LigneDeListe],Delimiteurs)='site')
+                      OR
+                      (ExtractDelimited(ft_typeCol,Liste[LigneDeListe],Delimiteurs)='limit')
+                   )
+             )
+             do
+             begin   // for each line in the table
+                   For Colonne := 1 to (NbColonnes) do // for eachh column
+                   begin  // split string and store in grid
+                       ContenuCellule := ExtractDelimited(Colonne,Liste[LigneDeListe],Delimiteurs);
+                       Grille.Cells[Colonne-1,LigneDeGrille]:= ContenuCellule;
+                       //Memo1.Append('@'+ContenuCellule+'@'); // debug
+                   end;
+                   LigneDeGrille := LigneDeGrille + 1; // inc TStringList index
+                   LigneDeListe := LigneDeListe + 1;   // inc TStringList Index
+             end;
+             Grille.RowCount := LigneDeListe +1;       // remove unnecessary empty lines at end of grid
+             Memo1.Append('Found :'+IntToStr(LigneDeListe - IndexDebut +1)+ ' records in seq_id table');
+        end else
+        Begin
+             Memo1.Append('***** ERROR, no #seq_id table found, Please Check File *****');
+        end;
+end;
+
+procedure TForm1.AnalyseSites(Liste, CountList: TStringList);
+var
+  IndexDebut,
+  FinDeListe,
+  DebutDeTable,
+  FinDeTable,
+  Colonne,
+  LigneDeListe,
+  LigneDeTable,
+  Ligne,
+  seq_idCol,
+  ft_typeCol,
+  ft_nameCol,
+  strandCol,
+  startCol,
+  endCol,
+  MatIndex,
+  StartInt,
+  EndInt,
+  SizeInt,
+  NbColonnes : integer;
+  ContenuCellule,
+  HeaderString,
+  FtType,
+  CurentMatrix,
+  StartString,
+  EndString,
+  actualSizeString,
+  nextSizeString,
+  FtName,
+  SeqIdString: String;
+  Delimiteurs : TSysCharSet;
+  MatrixNames : TStringList;
+  MatrixCount : Array [0..100] of Integer;
+Begin
+     // prescan to extract header position, matrix list
+     // find header, reads lines, split strings, store in Grid
+     Delimiteurs := [Chr(09)]; // columns delimited by vtab
+     IndexDebut := -1;         // init loop index
+     NbColonnes := 0;          // init number of columns
+     Memo1.Append('**** Analyse ****'); // log debug
+     FinDeListe := Liste.count -1; // find end of list
+     Repeat  // find table header = start of table looking for a string starting with #seq_id
+           IndexDebut := IndexDebut + 1;
+     until ((IndexDebut = FinDeListe) or (LeftStr(Liste[IndexDebut],7)='#seq_id'));
+     If IndexDebut >= FinDeListe then // if no table header found
+        Begin
+            Memo1.Append('***** ERROR, no #seq_id table found, Please Check File *****');
+        end else  // table header found
+        Begin
+             // locate columns
+             Memo1.Append('Found #seq_id table at line'+IntToStr(IndexDebut+1));
+             NbColonnes := WordCount(Liste[IndexDebut],Delimiteurs); // count number of columns
+             Memo1.Append('Found :'+IntToStr(NbColonnes)+ ' columns in seq_id table');
+             For Colonne := 1 to (NbColonnes-1) do // for eachh column
+             begin // identification of column headers/content
+                 ContenuCellule := ExtractDelimited(Colonne,Liste[IndexDebut],Delimiteurs);
+                 If ContenuCellule = '#seq_id' then
+                 begin
+                 seq_idCol := Colonne;
+                 Memo1.Append('Found #seq_id at column :'+IntToStr(Colonne));
+                 end else
+                 If ContenuCellule = 'ft_type' then
+                 begin
+                 ft_typeCol := Colonne;
+                 Memo1.Append('Found ft_type at column :'+IntToStr(Colonne));
+                 end else
+                 If ContenuCellule = 'ft_name' then
+                 begin
+                 ft_nameCol := Colonne;
+                 Memo1.Append('Found ft_name at column :'+IntToStr(Colonne));
+                 end else
+                 If ContenuCellule = 'start' then
+                 begin
+                 startCol := Colonne;
+                 Memo1.Append('Found start at column :'+IntToStr(Colonne));
+                 end else
+                 If ContenuCellule = 'end' then
+                 begin
+                 endCol := Colonne;
+                 Memo1.Append('Found stop at column :'+IntToStr(Colonne));
+                 end else
+                 If ContenuCellule = 'strand' then
+                 begin
+                 strandCol := Colonne;
+                 Memo1.Append('Found strand at column :'+IntToStr(Colonne));
+                 end;
+             end;
+             // extract alphabetic ordered list of matrix names
+             MatrixNames := TStringList.Create;    // create container
+             MatrixNames.Sorted := True;           // it wil be a sorted list
+             MatrixNames.Duplicates:=dupignore;    // thats refuses duplicate names
+             DebutDeTable := IndexDebut+1;         // we keep track of table start
+             LigneDeListe := DebutDeTable;         // init loop index
+             // now that we found the header and start of table, we go down the table to find
+             // each matrix name reported in fragments and beuild a an ordered list of matrices
+             while  // while in list and ft_type = site or limit (this is the only reliable marker)
+             (
+                  (LigneDeListe <> FinDeListe)  // while loop index < end of list
+                  AND                           // and ft_type is site or limit (ie we are still in the site count report)
+                  (
+                      (ExtractDelimited(ft_typeCol,Liste[LigneDeListe],Delimiteurs)='site')
+                      OR
+                      (ExtractDelimited(ft_typeCol,Liste[LigneDeListe],Delimiteurs)='limit')
+                   )
+             )
+             do      // building the ordered, undupicated list of matrixes found in the chip sequences
+             begin   // reads ft_name column add it to sorted unduplicated TStringlist and jump to next line
+                 ContenuCellule := ExtractDelimited(ft_nameCol,Liste[LigneDeListe],Delimiteurs); // extract matrix name
+                 If (ContenuCellule <>'START_END') Then MatrixNames.Add(ContenuCellule);         // filter out 'START_END' add name to list
+             FinDeTable := LigneDeListe;       // keep record of end of table
+             LigneDeListe := LigneDeListe + 1; // and jump to next line
+             end;
+
+             Memo1.Append('Found '+IntToStr(MatrixNames.Count)+' Matrixes');
+             Memo1.Append('In '+IntToStr(FinDeTable-IndexDebut)+' records');
+             Memo1.Append('Matrix List : ');   // log matrix names list
+             for Ligne := 0 to (MatrixNames.Count -1) do
+             begin
+                 Memo1.Append( IntToStr(Ligne)+' '+MatrixNames[Ligne]);
+             end;
+
+             // now all matrix names were found, Build header for CountList
+             HeaderString := 'seq_id'+Chr(09)+'size';      // header starts with id and size
+             for Ligne := 0 to (MatrixNames.Count -1) do   // followed by matrix names in alphanumeric order
+             begin
+                 Headerstring := HeaderString + Chr(09) + MatrixNames[Ligne];
+             end;
+             Memo1.Append('Header : '+Headerstring);
+
+             // Start Counting sites : real work starts here... ///////////////////////////////
+             //FinDeTable := 200; // TO LIMIT COMPUTING TIME FOR DEBUG !
+             // initialisation of variables
+             LigneDeListe := DebutDeTable;        // init loop index to start of table
+             SeqIdString := '';                   // init string
+             CountList.Clear;                     // init count list
+             CountList.Add(HeaderString);         // copy header in count list
+             for MatIndex := 0 to MatrixNames.Count -1 do MatrixCount[MatIndex]:=0; // init MatrixCount array
+             // get size of first fragment store it in actualSizeString
+             StartString := ExtractDelimited(startCol,Liste[LigneDeListe],Delimiteurs);
+             EndString := ExtractDelimited(endCol,Liste[LigneDeListe],Delimiteurs);
+             StartInt := StrToInt(StartString);
+             EndInt := StrToInt(EndString);
+             //SizeInt := (EndInt-StartInt)+1;
+             SizeInt := StartInt;     // for debug
+             actualSizeString := IntToStr(SizeInt);
+
+
+             While LigneDeListe <= FinDeTable + 1 do   // loop till end of table to extract fragments size and matrix counts
+             begin
+                 FtType := ExtractDelimited(ft_typeCol,Liste[LigneDeListe],Delimiteurs); // extract FtType
+                 FtName := ExtractDelimited(ft_nameCol,Liste[LigneDeListe],Delimiteurs); // extract Ftname
+                //////////
+                 If ((FtType = 'limit') AND (FtName='START_END') AND (LigneDeListe > DebutDeTable)) then // if found a new seq extract size
+                 //If ((FtType = 'limit') AND (FtName='START_END')) then // if found a new sequence fragment
+                 begin
+                      SeqIdString := ExtractDelimited(seq_idCol,Liste[LigneDeListe -1],Delimiteurs); // init new SeqIdString with new Id
+                      // extract size of fragment
+                      StartString := ExtractDelimited(startCol,Liste[LigneDeListe],Delimiteurs);
+                      EndString := ExtractDelimited(endCol,Liste[LigneDeListe],Delimiteurs);
+                      StartInt := StrToInt(StartString);
+                      EndInt := StrToInt(EndString);
+                      //SizeInt := (EndInt-StartInt)+1;
+                      SizeInt := StartInt;     // for debug
+                      nextSizeString := IntToStr(SizeInt);
+                      SeqIdString := SeqIdString + Chr(09) + actualSizeString; // add size in seqID rting
+                      actualSizeString := nextSizeString;
+                      //if (LigneDeListe > DebutDeTable) then  // on arrive à la fin du premier site
+                      //begin
+                          for MatIndex := 0 to MatrixNames.Count -1 do // for each matrix addressed by MatIndex
+                          begin
+                               SeqIdString := SeqIdString + Chr(09) + IntToStr(MatrixCount[MatIndex]); // dump matrix counts in SeqIdString
+                               MatrixCount[MatIndex]:=0; // zero the counts                            // zero matrix counts
+                          end;
+                          CountList.Add(SeqIdString); // write pending SeqIdString to the CountList TStringsList
+                     //end;
+
+                 end else
+                 if FtType = 'site' then
+                    begin
+                      // add one count to the correponding matrix/site in MatrixCount Array
+                      CurentMatrix := ExtractDelimited(ft_nameCol,Liste[LigneDeListe],Delimiteurs); // extract matrix name in CurentMatrix
+                      If MatrixNames.Find(CurentMatrix,MatIndex) then                               // lookup CurentMatrix name in the MatrixNames stringlist
+                         begin
+                           MatrixCount[MatIndex]:= MatrixCount[MatIndex]+1;                         // add one count in the array to cell with name CurentMatrix
+                         end;
+                    end;
+                 LigneDeListe:=LigneDeListe+1; // next line
+                 //Memo1.Append('LigneDeListe externe : '+ intToStr(LigneDeListe));  //DEBUG
+             end;
+        end;
+        // report number of fragments
+        Memo1.Append('Number of Fragments Found : '+IntToStr(CountList.Count -1));
+end;
+
+procedure TForm1.FusionDesListes(SiteCountStringList, RandCountStringList, SiteRandCountStringList : TStringList);
+var
+  FusionString : string;
+  Ligne,
+  LignesTotales : integer;
+
+begin
+     // merge site and rand counts in a new TStringList
+     Memo1.Append('**** Fusion ****');
+     Memo1.Append('Found : '+IntToStr(SiteCountStringList.Count-1)+' Site Counts');
+     Memo1.Append('Found : '+IntToStr(RandCountStringList.Count-1)+' Rand Counts');
+     If (SiteCountStringList.Count <> RandCountStringList.Count) then
+        Begin // report error if discrepency in site and rand counts
+             Memo1.Append('!?!?! WARNING number of SITE COUNTS differs from RAND COUNTS !?!?!');
+             Memo1.Append('!?!?! Please check Your input files !?!?!');
+             Memo1.Append('!?!?! The resulting fusion file will be irrelevant !?!?!');
+        end;
+     LignesTotales := Min(SiteCountStringList.Count-1,RandCountStringList.Count-1); // init end of loop to shortest list
+     For Ligne :=0 to LignesTotales do // merge strings
+         begin
+             SiteRandCountStringList.Add(SiteCountStringList[Ligne]+Chr(09)+RandCountStringList[Ligne]);
+             //Memo1.Append(SiteCountStringList[Ligne]+Chr(09)+RandCountStringList[Ligne]); DEBUG
+         end;
+     // report number of fragments found
+     Memo1.Append('Created fusion list with : '+IntToStr(RandCountStringList.Count -1)+' records');
+end;
+
+procedure TForm1.FormCreate(Sender: TObject);
+begin
+
+end;
+
+procedure TForm1.Button1Click(Sender: TObject);
+begin
+  // choose sites file
+  If Opendialog1.Execute then
+     begin
+     SiteFileName := Opendialog1.FileName;
+     // load file in a TStringList
+     Memo1.Append('Opening Sites file');   // log attempt to open file
+     Memo1.Append('Date :'+DateToStr(Date));
+     Memo1.Append('Time :'+TimeToStr(Time));
+     SiteStringList := TStringList.create;
+     SiteStringList.LoadFromFile(SiteFileName);
+     Memo1.Append('File loaded   :'+SiteFileName);  // log loading of file
+     Memo1.Append('Lines Read   :'+ IntToStr(SiteStringList.Count));// log count
+     Memo1.Append('Waiting for a matched scramble file to perform analysis');
+     SitesLoaded := True;
+     Label1.Caption := SiteFileName;
+     Opendialog2.InitialDir := ExtractFilePath(Opendialog1.Filename);
+  end;
+end;
+
+procedure TForm1.Button2Click(Sender: TObject);
+begin
+  if SitesLoaded Then
+     Begin
+     // choose scramble file
+     If Opendialog2.Execute then
+        begin
+        RandFileName := Opendialog2.FileName;
+        // load file in a TStringList
+        Memo1.Append('Opening Scramble file :'+RandFileName);   // log attempt to open file
+        Memo1.Append('Date :'+DateToStr(Date));
+        Memo1.Append('Time :'+TimeToStr(Time));
+        RandStringList := TStringList.create;
+        RandStringList.LoadFromFile(RandFileName);
+        Memo1.Append('File loaded   :'+RandFileName);  // log loading of file
+        Memo1.Append('Lines Read   :'+ IntToStr(RandStringList.Count));// log count
+        Label2.Caption := RandFileName;
+        RandLoaded := True;
+           // analyse file
+           If (SitesLoaded AND RandLoaded) then
+              begin
+              SiteCountStringList:=TstringList.Create;
+              RandCountStringList:=TstringList.Create;
+              AnalyseSites(SiteStringList,SiteCountStringList);
+              AnalyseSites(RandStringList,RandCountStringList);
+              SiteRandCountStringList:=TStringList.Create;
+              FusionDesListes(SiteCountStringList, RandCountStringList, SiteRandCountStringList);
+              FusionDone := True;
+              SiteRandCountStringList.SaveToFile(ExtractFilePath(OpenDialog1.Filename)+'Counts_'+ ExtractFileName(OpenDialog1.Filename)+'.csv'); //work done
+              Memo1.Append('Happy, apparentely work is done, I saved the results as :'+ExtractFilePath(OpenDialog1.Filename)+'Counts_'+ ExtractFileName(OpenDialog1.Filename)+'.csv');
+              end;
+        end;
+     end;
+end;
+
+procedure TForm1.Button5Click(Sender: TObject);
+begin
+  Memo1.Lines.Clear;
+end;
+
+procedure TForm1.Button6Click(Sender: TObject);
+begin // save the contents of Memo1 anytime
+  if SitesLoaded then   // if at least a sites file was loaded you choose where to save. can be complaints (site loded scramble unloade) or happy (all ok analysis performed).
+  begin
+       Memo1.Lines.SaveToFile(ExtractFilePath(OpenDialog1.Filename)+'logcounts'+ExtractFileName(OpenDialog1.Filename)+'.txt');
+  end else
+  if SaveDialog1.execute then // if nothing loaded oyr choose where to save the empty file :-)
+  begin
+       Memo1.Lines.SaveToFile(ExtractFilePath(SaveDialog1.Filename)+'logcounts'+ExtractFileName(SaveDialog1.Filename)+'.txt');
+  end;
+end;
+
+
+
+initialization
+  //{$I MatSigUnit1.lrs}
+  AllowSave := False;
+  SitesLoaded := False;
+  RandLoaded := False;
+  FusionDone := False;
+
+end.
+

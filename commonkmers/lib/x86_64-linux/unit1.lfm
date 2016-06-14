@@ -1,0 +1,112 @@
+object Form1: TForm1
+  Left = 132
+  Height = 838
+  Top = 168
+  Width = 1204
+  Align = alTop
+  Caption = 'komonkmer'
+  ClientHeight = 838
+  ClientWidth = 1204
+  LCLVersion = '1.0.10.0'
+  object Panel1: TPanel
+    Left = 0
+    Height = 224
+    Top = 0
+    Width = 1204
+    Align = alTop
+    ClientHeight = 224
+    ClientWidth = 1204
+    TabOrder = 0
+    object GeneTableButton: TButton
+      Left = 8
+      Height = 25
+      Top = 8
+      Width = 344
+      Caption = 'gene names correspondance table'
+      OnClick = GeneTableButtonClick
+      TabOrder = 0
+    end
+    object GeneTableLabel: TLabel
+      Left = 16
+      Height = 18
+      Top = 40
+      Width = 310
+      Caption = 'Please load gene names correspondance table'
+      ParentColor = False
+    end
+    object KmerSP1Button: TButton
+      Left = 8
+      Height = 25
+      Top = 64
+      Width = 344
+      Caption = 'kmer file for species 1'
+      OnClick = KmerSP1ButtonClick
+      TabOrder = 1
+    end
+    object KmerSP1Label: TLabel
+      Left = 16
+      Height = 18
+      Top = 96
+      Width = 228
+      Caption = 'Please load kmer file for species 1'
+      ParentColor = False
+    end
+    object KmerSP2Button: TButton
+      Left = 8
+      Height = 25
+      Top = 120
+      Width = 344
+      Caption = 'kemr file for species 2'
+      OnClick = KmerSP2ButtonClick
+      TabOrder = 2
+    end
+    object KmerSP2Label: TLabel
+      Left = 16
+      Height = 18
+      Top = 152
+      Width = 228
+      Caption = 'Please load kmer file for species 2'
+      ParentColor = False
+    end
+  end
+  object Memo1: TMemo
+    Left = 0
+    Height = 614
+    Top = 224
+    Width = 1204
+    Align = alClient
+    Lines.Strings = (
+      'Logfile Created By Komonkmer'
+    )
+    TabOrder = 1
+  end
+  object ActionButton: TButton
+    Left = 8
+    Height = 32
+    Top = 176
+    Width = 496
+    Caption = 'For each ortholog gene, find common k-mers in both species... Action !'
+    OnClick = ActionButtonClick
+    TabOrder = 2
+  end
+  object gcTableOpenDialog: TOpenDialog
+    left = 440
+    top = 8
+  end
+  object ksp1OpenDialog: TOpenDialog
+    left = 440
+    top = 64
+  end
+  object ksp2OpenDialog: TOpenDialog
+    Width = 1920
+    Height = 1028
+    FileName = '/home/philippe/Dropbox/eco_sim-master.zip'
+    InitialDir = '/home/philippe/Dropbox/'
+    left = 440
+    top = 112
+  end
+  object MemoSaveDialog: TSaveDialog
+    left = 872
+    top = 168
+  end
+end

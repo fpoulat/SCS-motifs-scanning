@@ -1,0 +1,70 @@
+object Form1: TForm1
+  Left = 702
+  Height = 687
+  Top = 222
+  Width = 614
+  Caption = 'Form1'
+  ClientHeight = 687
+  ClientWidth = 614
+  LCLVersion = '0.9.30.2'
+  object Panel1: TPanel
+    Left = 0
+    Height = 240
+    Top = 0
+    Width = 614
+    Align = alTop
+    ClientHeight = 240
+    ClientWidth = 614
+    TabOrder = 0
+    object Button1: TButton
+      Left = 8
+      Height = 25
+      Top = 8
+      Width = 184
+      Caption = 'Please Select ft File !'
+      OnClick = Button1Click
+      TabOrder = 0
+    end
+    object CheckGroup1: TCheckGroup
+      Left = 304
+      Height = 168
+      Top = 64
+      Width = 293
+      AutoFill = True
+      Caption = 'CheckGroup1'
+      ChildSizing.LeftRightSpacing = 6
+      ChildSizing.TopBottomSpacing = 6
+      ChildSizing.EnlargeHorizontal = crsHomogenousChildResize
+      ChildSizing.EnlargeVertical = crsHomogenousChildResize
+      ChildSizing.ShrinkHorizontal = crsScaleChilds
+      ChildSizing.ShrinkVertical = crsScaleChilds
+      ChildSizing.Layout = cclLeftToRightThenTopToBottom
+      ChildSizing.ControlsPerLine = 1
+      TabOrder = 1
+    end
+    object Label1: TLabel
+      Left = 8
+      Height = 18
+      Top = 40
+      Width = 46
+      Caption = 'Label1'
+      ParentColor = False
+    end
+  end
+  object Memo1: TMemo
+    Left = 0
+    Height = 447
+    Top = 240
+    Width = 614
+    Align = alClient
+    Lines.Strings = (
+      'Memo1'
+    )
+    TabOrder = 1
+  end
+  object OpenDialog1: TOpenDialog
+    Title = 'Open ft File'
+    left = 576
+    top = 8
+  end
+end

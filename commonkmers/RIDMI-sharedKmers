@@ -1,0 +1,29 @@
+Yo, 
+
+Tu trouves une série de fichiers : shared_kmers4_Bostau6_mm10.csv
+le nom parle de lui même : kmers de longueur 4 conservées dans les genes bostau6 et mm10
+
+Pour générer ces fichiers, j'ai écrit un programme qui demande 3 fichiers :
+- la table de correspondance des noms de genes entre bostau6 et mm10
+- le fichier kmerhunt 4 de bostau6
+- le fichier kmerhunt 4 de mm10
+
+A partir de là le prog parcourt la table de correspondance des noms de gènes, 
+- extrait le nom de gene pour bostau6 et sa traduction pour mm10;
+- cherche dans le fichier kmerhunt 4 de bostau6 chaque occurence du nom de gene, et crée une liste qui contient les lignes ou ce gene apparait
+- cherche dans le fichier kmerhunt 4 de mm10 chaque occurence du nom de gene traduit, et crée une liste qui contient les lignes ou ce gene apparait
+
+Une fois sélectionnées les lignes qui contiennent le nom du gène, 
+-on parcourt la liste bostau6 
+-on extrait la séquence de chaque kmer,
+-et on cherche l'occurence du kmer ainsi que son réverse-complément dans la liste mm10. 
+On évite de recompter les palindromes, cad les kmers qui sont égaux à leur réverse-complément, ils ont tendance à vouloir se faire compter 2 fois :-)
+
+-On reporte chaque concordance entre bostau6 (sp1) et mm10 (sp2), en recopiant les infos pertinentes, on indique si la séquence trouvée dans mm10 est directe ou réverse complémentée. on indique aussi si la séquence est palindromique.
+
+... et on passe au gène suivant dans la table de correspondance.
+
+Voilà !
+P.
+
+
