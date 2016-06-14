@@ -4,10 +4,12 @@ In this repository you will find the software that was created to investigate th
 
 ---------------------------------------------------------------------------------------------------------------------
 MatSig7_x64 : contains the MatSig program
-Reads 2 matched ft files (ChIP and Scramble) and counts the occurances of transcription factor sites in each fragment.
+
+Reads 2 matched ft files (ChIP and Scramble) and counts the occurences of transcription factor sites in each fragment.
 It creates a csv file prefixed with Counts_ and a logfile.
 
 In this folder you find the Lazarus source code :
+
 backup  
 lib  
 MatSig.ico  
@@ -18,9 +20,11 @@ matsigunit1.lfm
 matsigunit1.pas
 
 A Linux64bits executable (tested with ubuntu 14.04)
+
 MatSig
 
 And a directory with test data
+
 test-data
 
 ---------------------------------------------------------------------------------------------------------------------------
@@ -32,6 +36,7 @@ mintervals reads a .ft file and allows to create several outpout files :
 - filename_sorted.csv : same structure as a .ft file with sites reordered by position along the fragment
 
 In this folder you find the Lazarus source code :
+
 backup  
 IntegerList.pas
 lib  
@@ -44,25 +49,28 @@ unit1.lfm
 unit1.pas
 
 A Linux64bits executable (tested with ubuntu 14.04)
+
 mintervals
 
 And a directory with test data
+
 test-data
 
 ----------------------------------------------------------------------------------------------------------------------------
 scripts_kmer_counting
+
 In this directory you find the scripts we used for counting k-mers of transcription factor sites
 
 serialKmerABCDEFoptm.sh :
-# usage
-# open a console
-# cd in directory containing this script and a directory named 
-# StrandAwareSites_files, that contains the gellyroll files
-# then call the script with 2 numeric arguments  
-# ./serialKmer.sh min_kmer_size max_kmer_size
+usage
+open a console
+cd in directory containing this script and a directory named 
+StrandAwareSites_files, that contains the gellyroll files
+then call the script with 2 numeric arguments  
+./serialKmer.sh min_kmer_size max_kmer_size
 
 
-This is the bash script file that performs the job
+This is the bash script file that performs the k-mer counting job.
 it reads all the gellyroll files (that you produce with mintervals) found in StrandAwareSites_files folder,
 and encodes the sites in a 6 letter abcde alphabet, producing files with extension _.Gelly4FastaFake.
 It creates a StrandAwareSites_files_FastaFake folder ans saves the fastafake files in it
@@ -75,16 +83,6 @@ serialKmer then decodes the ABCDEF 6 letter alphabet back to the oriented transc
 GNU sed and the file sedsiteABCDEFdecoding. 
 The resulting decoded files are stored in gfcountsdecodedTOP1000. They carry the extension .kmerSitesCounts
 
-
-
-
-
-
-
-
-StrandAwareSites_files
-StrandAwareSites_files_FastaFake
-
 3letters            
 ft_files                
 
@@ -92,9 +90,11 @@ ft_files
 ----------------------------------------------------------------------------------------------------------------------------
 KmerHunt
 
+
+----------------------------------------------------------------------------------------------------------------------------
 commonkmers :
 
 
 
-
+---------------------------------------------------------------------------------------------------------------------------
 -end-
