@@ -88,11 +88,34 @@ ft_files
 
 
 ----------------------------------------------------------------------------------------------------------------------------
-KmerHunt
+KmerHunt : contains the kmerhunter program.
+
+This program reads :
+- a kmer counting files as produced by countKmerABCDEF  _ABCDEF_kmer_dump_4_upto_8_mers_TOP1000
+- the corresponding Gellyroll file as produced by mintervals
+And it reports for each kmer of a chosen size, the list of fragments that contain this kmer.
+It produces a file with extension Kerhuntlength8.csv
+
+In this folder you find the Lazarus source code :
+lib      
+backup       
+kmerhunter.ico  
+kmerhunter.lpr  
+kmerhunter.res        
+kmerhunterwindow.pas
+kmerhunter.lpi  
+kmerhunter.lps  
+kmerhunterwindow.lfm
+
+A Linux64bits executable (tested with ubuntu 14.04)
+
+kmerhunter2  
+
+
 
 
 ----------------------------------------------------------------------------------------------------------------------------
-commonkmers :
+commonkmers : contains the program komonkmer2
 
 
 
